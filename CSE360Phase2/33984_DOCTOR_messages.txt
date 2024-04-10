@@ -1,0 +1,4 @@
+Patient: 33984|2024-04-09 18:41:05| hey doc
+Patient: 33984|2024-04-09 18:41:11| any updates?
+Doctor: 33984|2024-04-09 18:41:35| hi
+Doctor: 33984|2024-04-09 18:41:41| yes you have cancer
