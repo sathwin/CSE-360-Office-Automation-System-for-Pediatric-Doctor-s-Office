@@ -118,6 +118,10 @@ public class NursePortal {
         // Update the file name format here
         String filePath = imagesDirectoryPath + File.separator + patientID + "_" + firstName + "_" + lastName + "_" + formattedDOB + ".txt";
 
+        if (firstName.isEmpty() || lastName.isEmpty() || dob.isEmpty()) {
+            showAlert("Please enter all fields.");
+            return;
+        }
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write("Patient ID: " + patientID + "\n");
             fileWriter.write("First Name: " + firstName + "\n");
