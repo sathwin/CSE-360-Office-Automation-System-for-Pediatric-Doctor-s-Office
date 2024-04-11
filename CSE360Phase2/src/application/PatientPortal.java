@@ -29,7 +29,8 @@ import javafx.scene.layout.BackgroundFill;
 public class PatientPortal {
     private Stage primaryStage;
     // Ensure this path is correctly pointing to your project's resources or appropriate directory
-    private final String imagesDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2";
+    String directoryPath = System.getProperty("user.dir");
+    private final String imagesDirectoryPath = directoryPath + "/";
 
     public PatientPortal(Stage primaryStage) {
         this.primaryStage = primaryStage;
