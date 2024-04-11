@@ -11,16 +11,24 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Class to manage messaging between patients and doctors.
 public class MessagingPortal {
+    // Text area for displaying messages.
     private TextArea messageDisplayArea;
+    // Input fields for patient ID and message text.
     private TextField patientIdInput, messageInputField;
+    // Buttons for various actions.
     private Button loadButton, sendButton, callButton;
+    // Directory path for data storage.
     String directoryPath = System.getProperty("user.dir");
-    private final String dataDirectoryPath = directoryPath + "/"; // Default path, consider using a configuration mechanism
+    // Path where messages are stored.
+    private final String dataDirectoryPath = directoryPath + "/";
+    // Identifier for the doctor.
     private final String doctorId = "DOCTOR";
+    // Flag to indicate if the user is a doctor.
     private boolean isDoctor;
 
-
+    // Builds the top panel with patient ID input and action buttons.
     private VBox createTopPanel() {
         VBox topPanel = new VBox(10);
         patientIdInput = new TextField();
@@ -30,76 +38,65 @@ public class MessagingPortal {
         callButton = new Button("Initiate Call");
         callButton.setOnAction(e -> initiateCall());
         
-
         topPanel.getChildren().addAll(new Label("Patient ID:"), patientIdInput, loadButton, callButton);
         return topPanel;
     }
 
+    // Initiates a call to the patient, showing an alert.
     private Object initiateCall() {
-    	String patientId = patientIdInput.getText().trim();
-    	
-    	if (patientId.isEmpty()) {
-        	showAlert("Patient ID cannot be empty");
+        String patientId = patientIdInput.getText().trim();
+        
+        if (patientId.isEmpty()) {
+            showAlert("Patient ID cannot be empty");
         } else {
-        	showAlert("CALLING...");
+            showAlert("CALLING...");
         }
-    	
-		return null;
-	}
+        
+        return null;
+    }
 
-	private ScrollPane createMessageDisplayArea() {
+    // Creates a scroll pane for displaying messages.
+    private ScrollPane createMessageDisplayArea() {
         messageDisplayArea = new TextArea();
         messageDisplayArea.setEditable(false);
         return new ScrollPane(messageDisplayArea);
     }
 
+    // Creates the bottom panel for message input and the send button.
     private HBox createBottomPanel() {
         HBox bottomPanel = new HBox(10);
         messageInputField = new TextField();
         messageInputField.setPromptText("Enter your message...");
         sendButton = new Button("Send");
         sendButton.setOnAction(e -> sendMessage());
-
+        
         bottomPanel.getChildren().addAll(messageInputField, sendButton);
         return bottomPanel;
     }
 
+    // Handles sending of a message.
     private void sendMessage() {
-    	String patientId = patientIdInput.getText().trim();
+        String patientId = patientIdInput.getText().trim();
         String messageContent = messageInputField.getText().trim();
 
-        if (patientId.isEmpty()) {
-            showAlert("Patient ID cannot be empty");
-            return;
-        }
-        
-        if (messageContent.isEmpty()) {
-            showAlert("Message content cannot be empty.");
+        if (patientId.isEmpty() || messageContent.isEmpty()) {
+            showAlert("Patient ID and message content cannot be empty.");
             return;
         }
 
         try {
-            // Check if a patient file exists for the given patient ID
-            boolean patientFileExists = Files.list(Paths.get(dataDirectoryPath))
-            		.anyMatch(path -> path.getFileName().toString().startsWith(patientId) && path.getFileName().toString().endsWith(".txt"));
-
-            if (!patientFileExists) {
-                showAlert("Patient file does not exist.");
-                return;
-            }
-            
             Path path = Paths.get(dataDirectoryPath, patientId + "_" + doctorId + "_messages.txt");
             String senderPrefix = isDoctor ? "Doctor" : "Patient";
-            Message message = new Message(patientId, senderPrefix, messageContent);
-
-            Files.writeString(path, senderPrefix + ": " + message.formatForSaving() + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            messageInputField.clear(); // Clear input field after sending
-            loadMessages(); // Refresh message display area
+            // Construct message format.
+            Files.writeString(path, senderPrefix + ": " + messageContent + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            messageInputField.clear(); // Clear the input field after sending.
+            loadMessages(); // Refresh the message display.
         } catch (IOException e) {
             showAlert("Failed to send message: " + e.getMessage());
         }
     }
 
+    // Loads and displays messages for a specific patient.
     private void loadMessages() {
         String patientId = patientIdInput.getText().trim();
         Path path = Paths.get(dataDirectoryPath, patientId + "_" + doctorId + "_messages.txt");
@@ -112,44 +109,36 @@ public class MessagingPortal {
         try {
             List<String> lines = Files.readAllLines(path);
             String messages = lines.stream()
-            	.map(line -> {
-                        // Assuming each line starts with "Doctor:" or "Patient:"
-                        String[] parts = line.split(":", 2);
-                        if (parts.length < 2) return "Invalid message format";
-                        // Trim necessary if there are leading spaces after split
-                        return parts[0].trim() + ": " + parts[1].trim();
-                    })
-                 .collect(Collectors.joining("\n"));
+                                   .collect(Collectors.joining("\n"));
             messageDisplayArea.setText(messages);
         } catch (IOException e) {
             showAlert("Failed to load messages: " + e.getMessage());
         }
     }
 
+    // Shows an alert with a specific message.
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Info");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
 
+    // Displays the messaging portal window.
+    public void showMessagingPortal(boolean isDoctor) {
+        this.isDoctor = isDoctor;
+        
+        Stage newStage = new Stage();
+        newStage.setTitle("Messaging System");
 
+        BorderPane root = new BorderPane();
+        root.setTop(createTopPanel());
+        root.setCenter(createMessageDisplayArea());
+        root.setBottom(createBottomPanel());
 
-	public void showMessagingPortal(boolean isDoctor) {
-		this.isDoctor = isDoctor;
-		
-		Stage newStage = new Stage();
-	    newStage.setTitle("Messaging System");
-
-	    BorderPane root = new BorderPane();
-	    root.setTop(createTopPanel());
-	    root.setCenter(createMessageDisplayArea());
-	    root.setBottom(createBottomPanel());
-
-	    Scene scene = new Scene(root, 600, 400);
-	    newStage.setScene(scene);
-	    newStage.show();
-		
-	}
+        Scene scene = new Scene(root, 600, 400);
+        newStage.setScene(scene);
+        newStage.show();
+    }
 }
+
