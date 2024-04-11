@@ -192,8 +192,9 @@ public class PatientView {
         GridPane centerGrid = createCenterGrid();
         root.setCenter(centerGrid);
 
-        Scene scene = new Scene(root, 1200, 600); // Adjust size as needed
+        Scene scene = new Scene(root, 1500, 800); // Adjust size as needed
         stage.setScene(scene);
+        stage.setFullScreen(true);
         stage.setTitle("Patient Portal - Patient Information");
         stage.show();
 
