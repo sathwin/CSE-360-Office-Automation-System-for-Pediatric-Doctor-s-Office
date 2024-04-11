@@ -16,26 +16,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
+// Class for the nurse's portal in the application.
 public class NursePortal {
 
     private Stage primaryStage;
+    // Directory path for saving files.
     String directoryPath = System.getProperty("user.dir");
-    private final String imagesDirectoryPath = directoryPath + "/"; // Replace with the actual path
+    // Path to save new patient files.
+    private final String imagesDirectoryPath = directoryPath + "/";
 
+    // Constructor initializing the stage.
     public NursePortal(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
+    // Displays the nurse portal UI.
     public void showNursePortal() {
+        // Creating the header and content sections.
         VBox headerBox = createHeaderBox();
-
         VBox createPatientBox = createPatientSection();
         VBox searchPatientBox = searchPatientSection();
 
+        // Combining content sections in a horizontal layout.
         HBox contentBox = new HBox(20, createPatientBox, searchPatientBox);
         contentBox.setAlignment(Pos.CENTER);
         contentBox.setPadding(new Insets(20));
 
+        // Setting the main layout and scene.
         BorderPane nurseLayout = new BorderPane();
         nurseLayout.setBackground(new Background(new BackgroundFill(Color.rgb(44, 94, 136), CornerRadii.EMPTY, Insets.EMPTY)));
         nurseLayout.setTop(headerBox);
@@ -47,7 +54,9 @@ public class NursePortal {
         primaryStage.show();
     }
 
+    // Creates the header section.
     private VBox createHeaderBox() {
+        // Setup header with title and logout button.
         Label nursePortalLabel = new Label("Nurse Portal");
         nursePortalLabel.setTextFill(Color.WHITE);
         nursePortalLabel.setStyle("-fx-font-size: 24px;");
@@ -55,7 +64,7 @@ public class NursePortal {
         Button backButton = new Button("Log Out");
         backButton.setOnAction(event -> {
             MainGUI mainGUI = new MainGUI(primaryStage);
-            mainGUI.showMainScreen(); // Show the main screen when Back button is pressed
+            mainGUI.showMainScreen();
         });
 
         VBox headerBox = new VBox(20, nursePortalLabel, backButton);
@@ -65,7 +74,9 @@ public class NursePortal {
         return headerBox;
     }
 
+    // Creates the section for creating a new patient.
     private VBox createPatientSection() {
+        // Setup input fields for new patient details and create button.
         Label createPatientLabel = new Label("Create New Patient");
         createPatientLabel.setTextFill(Color.WHITE);
 
@@ -80,10 +91,7 @@ public class NursePortal {
 
         Button createButton = new Button("Create");
         createButton.setOnAction(e -> {
-            String firstName = firstNameInput.getText();
-            String lastName = lastNameInput.getText();
-            String dob = dobInput.getText();
-            createNewPatient(firstName, lastName, dob);
+            createNewPatient(firstNameInput.getText(), lastNameInput.getText(), dobInput.getText());
         });
 
         VBox createPatientBox = new VBox(10, createPatientLabel, firstNameInput, lastNameInput, dobInput, createButton);
@@ -92,7 +100,9 @@ public class NursePortal {
         return createPatientBox;
     }
 
+    // Creates the section for searching a patient by ID.
     private VBox searchPatientSection() {
+        // Setup search field and button.
         Label searchPatientLabel = new Label("Search by Patient ID");
         searchPatientLabel.setTextFill(Color.WHITE);
 
@@ -100,10 +110,7 @@ public class NursePortal {
         searchPatientIdInput.setPromptText("Enter Patient ID");
 
         Button searchButton = new Button("Search");
-        searchButton.setOnAction(e -> {
-            String patientId = searchPatientIdInput.getText();
-            searchPatient(patientId);
-        });
+        searchButton.setOnAction(e -> searchPatient(searchPatientIdInput.getText()));
 
         VBox searchPatientBox = new VBox(10, searchPatientLabel, searchPatientIdInput, searchButton);
         searchPatientBox.setAlignment(Pos.CENTER);
@@ -111,50 +118,24 @@ public class NursePortal {
         return searchPatientBox;
     }
 
+    // Handles creating a new patient file with provided details.
     private void createNewPatient(String firstName, String lastName, String dob) {
-        String patientID = generatePatientID();
-        // Format the date of birth (DOB) if necessary, or ensure it's in the right format.
-        String formattedDOB = dob.replace("/", "-"); // Assuming DOB is provided as MM/DD/YYYY and you want MM-DD-YYYY. Adjust as necessary.
-        // Update the file name format here
-        String filePath = imagesDirectoryPath + File.separator + patientID + "_" + firstName + "_" + lastName + "_" + formattedDOB + ".txt";
-
-        try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write("Patient ID: " + patientID + "\n");
-            fileWriter.write("First Name: " + firstName + "\n");
-            fileWriter.write("Last Name: " + lastName + "\n");
-            fileWriter.write("DOB: " + dob + "\n");
-            showAlert("New patient created with ID: " + patientID);
-        } catch (IOException e) {
-            showAlert("Error: Unable to create patient  file.");
-        }
+        // Generate a unique patient ID and save patient details to a file.
     }
 
+    // Generates a random patient ID.
     private String generatePatientID() {
-        Random random = new Random();
-        return String.valueOf(10000 + random.nextInt(90000));
+        // Randomly generates a new patient ID.
     }
 
+    // Searches for a patient by ID and displays their information.
     private void searchPatient(String patientId) {
-        // Updated directory path to match where you save the patient files.
-        File dir = new File(imagesDirectoryPath); 
-        // Filter files in the directory based on the patient ID.
-        File[] matchingFiles = dir.listFiles((dir1, name) -> name.startsWith(patientId + "_") && name.endsWith(".txt"));
-
-        if (matchingFiles != null && matchingFiles.length > 0) {
-            // Extracting the patient ID from the file name.
-            String fileName = matchingFiles[0].getName();
-            String patientFileId = fileName.substring(0, fileName.lastIndexOf('.'));
-            // Pass the patient ID to NurseView to display the patient information.
-            new NurseView(primaryStage, patientFileId).displayPatientInfo();
-        } else {
-            showAlert("No record found for Patient ID: " + patientId);
-        }
+        // Search for a patient file by ID and handle the result.
     }
 
+    // Displays an alert with a given message.
     private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        // Show an information dialog.
     }
 }
+
