@@ -217,15 +217,76 @@ public class PatientView {
 
     // Method to save updated patient information
     private void savePatientInfo() {
-        // Implementation to save patient info goes here
-        // Example: Locate existing patient file, update content, and save
+        // Locate the existing patient file by listing files in the directory and matching the pattern
+        File dir = new File(imagesDirectoryPath);
+        String pattern = patientId + "_.*\\.txt"; // Regex pattern to match patient files
+        File[] matchingFiles = dir.listFiles((dir1, name) -> name.matches(pattern));
+
+        Path filePath;
+        if (matchingFiles != null && matchingFiles.length > 0) {
+            // Assuming the first file is the correct one if multiple matches exist
+            filePath = matchingFiles[0].toPath();
+        } else {
+            // Log or notify about the inability to locate the file, if necessary
+            System.err.println("No matching patient file found for ID: " + patientId);
+            return; // Stop execution if no file is found
+        }
+
+        // Only update the "CONTACTINFORMATION" as per requirement
+        String contactInfo = ((TextArea) controls.get("CONTACTINFORMATION")).getText();
+        List<String> lines = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(filePath);
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).startsWith("CONTACTINFORMATION:")) {
+                    lines.set(i, "CONTACTINFORMATION: " + contactInfo);
+                    break; // Stop once the contact info line is updated
+                }
+            }
+        } catch (IOException e) {
+            showAlert("Error reading patient data: " + e.getMessage());
+            return;
+        }
+
+        try {
+            Files.write(filePath, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            showAlert("Patient information updated successfully.");
+        } catch (IOException e) {
+            showAlert("Error updating patient data: " + e.getMessage());
+        }
     }
 
-    // Preloads patient data from file into the UI controls
     private void preloadPatientData() {
-        // Implementation to preload patient data from a file goes here
-    }
+        // Attempt to find the file that starts with patientId and ends with .txt
+        File dir = new File(imagesDirectoryPath);
+        File[] matchingFiles = dir.listFiles((dir1, name) -> name.startsWith(patientId + "_") && name.endsWith(".txt"));
 
+        if (matchingFiles != null && matchingFiles.length > 0) {
+            // Assuming only one matching file per patientId, use the first file found
+            Path filePath = matchingFiles[0].toPath();
+            try {
+                List<String> lines = Files.readAllLines(filePath);
+                lines.forEach(line -> {
+                    String[] parts = line.split(": ", 2);
+                    if (parts.length == 2) {
+                        String key = parts[0].toUpperCase().replaceAll("\\s+", "");
+                        String value = parts[1];
+                        Control control = controls.get(key);
+                        if (control instanceof CheckBox) {
+                            ((CheckBox) control).setSelected("Yes".equals(value));
+                        } else if (control instanceof TextInputControl) {
+                            ((TextInputControl) control).setText(value);
+                        }
+                    }
+                });
+            } catch (IOException e) {
+                showAlert("Error loading patient data: " + e.getMessage());
+            }
+        } else {
+            // If no file is found, you might want to notify the user or log
+            System.out.println("No data file found for patient ID: " + patientId);
+        }
+    }
     // Displays an alert with a given message
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
