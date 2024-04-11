@@ -118,13 +118,28 @@ public class NurseView {
 
     // Saves the patient info to a file.
     private void savePatientInfo() {
-        // Implementation to save patient info.
+        Path filePath = Paths.get(imagesDirectoryPath, patientId + ".txt");
+        List<String> lines = new ArrayList<>();
+
+        controls.forEach((key, value) -> {
+            if (value instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) value;
+                lines.add(key + ": " + (checkBox.isSelected() ? "Yes" : "No"));
+            } else if (value instanceof TextInputControl) {
+                TextInputControl textInput = (TextInputControl) value;
+                lines.add(key + ": " + textInput.getText());
+            }
+        });
+
+        try {
+            Files.write(filePath, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            showAlert("Patient information saved successfully.");
+        } catch (IOException e) {
+            showAlert("Error saving patient data: " + e.getMessage());
+        }
     }
 
-    // Loads patient data from file into the UI.
     private void preloadPatientData() {
-        // Implementation to load patient data.
-    }
 
     // Shows an information alert.
     private void showAlert(String message) {
