@@ -242,37 +242,36 @@ public class PatientView {
 	}
 
 	private void preloadPatientData() {
-		// Attempt to find the file that starts with patientId and ends with .txt
-		File dir = new File(imagesDirectoryPath);
-		File[] matchingFiles = dir.listFiles((dir1, name) -> name.startsWith(patientId + "_") && name.endsWith(".txt"));
+        // Attempt to find the file that starts with patientId and ends with .txt
+        File dir = new File(imagesDirectoryPath);
+        File[] matchingFiles = dir.listFiles((dir1, name) -> name.startsWith(patientId + "_") && name.endsWith(".txt"));
 
-		if (matchingFiles != null && matchingFiles.length > 0) {
-			// Assuming only one matching file per patientId, use the first file found
-			Path filePath = matchingFiles[0].toPath();
-			try {
-				List<String> lines = Files.readAllLines(filePath);
-				lines.forEach(line -> {
-					String[] parts = line.split(": ", 2);
-					if (parts.length == 2) {
-						String key = parts[0].toUpperCase().replaceAll("\\s+", "");
-						String value = parts[1];
-						Control control = controls.get(key);
-						if (control instanceof CheckBox) {
-							((CheckBox) control).setSelected("Yes".equals(value));
-						} else if (control instanceof TextInputControl) {
-							((TextInputControl) control).setText(value);
-						}
-					}
-				});
-			} catch (IOException e) {
-				showAlert("Error loading patient data: " + e.getMessage());
-			}
-		} else {
-			// If no file is found, you might want to notify the user or log
-			System.out.println("No data file found for patient ID: " + patientId);
-		}
-	}
-
+        if (matchingFiles != null && matchingFiles.length > 0) {
+            // Assuming only one matching file per patientId, use the first file found
+            Path filePath = matchingFiles[0].toPath();
+            try {
+                List<String> lines = Files.readAllLines(filePath);
+                lines.forEach(line -> {
+                    String[] parts = line.split(": ", 2);
+                    if (parts.length == 2) {
+                        String key = parts[0].toUpperCase().replaceAll("\\s+", "");
+                        String value = parts[1];
+                        Control control = controls.get(key);
+                        if (control instanceof CheckBox) {
+                            ((CheckBox) control).setSelected("Yes".equals(value));
+                        } else if (control instanceof TextInputControl) {
+                            ((TextInputControl) control).setText(value);
+                        }
+                    }
+                });
+            } catch (IOException e) {
+                showAlert("Error loading patient data: " + e.getMessage());
+            }
+        } else {
+            // If no file is found, you might want to notify the user or log
+            System.out.println("No data file found for patient ID: " + patientId);
+        }
+    }
 	private void showAlert(String message) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setHeaderText(null);
