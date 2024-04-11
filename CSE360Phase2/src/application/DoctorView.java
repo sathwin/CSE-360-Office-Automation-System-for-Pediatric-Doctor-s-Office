@@ -26,7 +26,8 @@ import javafx.geometry.VPos;
 public class DoctorView {
     private Stage stage;
     private String patientId;
-    private final String imagesDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2";
+    String directoryPath = System.getProperty("user.dir");
+    private final String imagesDirectoryPath = directoryPath + "/";
     private Map<String, Control> controls = new HashMap<>();
     private CheckBox isChildOver12Checkbox;
 
@@ -70,8 +71,9 @@ public class DoctorView {
         GridPane centerGrid = createCenterGrid();
         root.setCenter(centerGrid);
 
-        Scene scene = new Scene(root, 1200, 600);
+        Scene scene = new Scene(root, 1800, 800);
         stage.setScene(scene);
+	stage.setFullScreen(true);
         stage.setTitle("Doctor Portal - Patient Information");
         
         // Preload patient data before displaying the scene
