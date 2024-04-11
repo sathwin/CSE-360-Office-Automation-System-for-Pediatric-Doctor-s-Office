@@ -24,7 +24,8 @@ import javafx.geometry.VPos;
 public class NurseView {
     private Stage stage;
     private String patientId;
-    private final String imagesDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2";
+    String directoryPath = System.getProperty("user.dir");
+    private final String imagesDirectoryPath = directoryPath + "/";
     private Map<String, Control> controls = new HashMap<>();
     private CheckBox isChildOver12Checkbox;
 
