@@ -69,8 +69,9 @@ public class NurseView {
         GridPane centerGrid = createCenterGrid();
         root.setCenter(centerGrid);
 
-        Scene scene = new Scene(root, 1200, 600);
+        Scene scene = new Scene(root, 1500, 800);
         stage.setScene(scene);
+        stage.setFullScreen(true);
         stage.setTitle("Nurse Portal - Patient Information");
         stage.show();
 
