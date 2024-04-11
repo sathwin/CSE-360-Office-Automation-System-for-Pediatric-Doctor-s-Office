@@ -140,6 +140,28 @@ public class NurseView {
     }
 
     private void preloadPatientData() {
+        Path filePath = Paths.get(imagesDirectoryPath, patientId + ".txt");
+        if (Files.exists(filePath)) {
+            try {
+                List<String> lines = Files.readAllLines(filePath);
+                lines.forEach(line -> {
+                    String[] parts = line.split(": ", 2);
+                    if (parts.length == 2) {
+                        String key = parts[0].replaceAll("\\s+", "").toUpperCase();
+                        String value = parts[1];
+                        Control control = controls.get(key);
+                        if (control instanceof CheckBox) {
+                            ((CheckBox) control).setSelected("Yes".equals(value));
+                        } else if (control instanceof TextInputControl) {
+                            ((TextInputControl) control).setText(value);
+                        }
+                    }
+                });
+            } catch (IOException e) {
+                showAlert("Error loading patient data: " + e.getMessage());
+            }
+        }
+    }
 
     // Shows an information alert.
     private void showAlert(String message) {
