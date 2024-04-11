@@ -148,7 +148,7 @@ public class PatientView {
 		saveButton.setMaxWidth(100);
 		GridPane.setHalignment(saveButton, HPos.RIGHT);
 		GridPane.setValignment(saveButton, VPos.BOTTOM);
-		grid.add(saveButton, 1, 16);
+		grid.add(saveButton, 1, 20);
 		saveButton.setOnAction(event -> savePatientInfo());
 
 		return grid;
