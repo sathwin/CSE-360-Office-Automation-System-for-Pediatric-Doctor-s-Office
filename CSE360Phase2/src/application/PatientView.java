@@ -140,15 +140,15 @@ public class PatientView {
 		addLabelAndControl(grid, "Prescribed Medications", "PRESCRIBEDMEDICATIONS", 1, 7, true);
 		addLabelAndControl(grid, "Immunization Records", "IMMUNIZATIONRECORDS", 1, 10, true);
 		addLabelAndControl(grid, "Contact Information", "CONTACTINFORMATION", 1, 13, false);
-		addLabelAndControl(grid, "Doctor Findings", "DOCTORFINDINGS", 1, 15, true);
-		addLabelAndControl(grid, "Doctor Remarks", "DOCTORREMARKS", 0, 17, true);
+		addLabelAndControl(grid, "Doctor Findings", "DOCTORFINDINGS", 1, 16, true);
+		addLabelAndControl(grid, "Doctor Remarks", "DOCTORREMARKS", 0, 19, true);
 
 		// Add Save button
 		Button saveButton = new Button("Save");
 		saveButton.setMaxWidth(100);
 		GridPane.setHalignment(saveButton, HPos.RIGHT);
 		GridPane.setValignment(saveButton, VPos.BOTTOM);
-		grid.add(saveButton, 1, 20);
+		grid.add(saveButton, 1, 22);
 		saveButton.setOnAction(event -> savePatientInfo());
 
 		return grid;
@@ -201,45 +201,45 @@ public class PatientView {
 	}
 
 	private void savePatientInfo() {
-		// Locate the existing patient file by listing files in the directory and
-		// matching the pattern
-		File dir = new File(imagesDirectoryPath);
-		String pattern = patientId + "_.*\\.txt"; // Regex pattern to match patient files
-		File[] matchingFiles = dir.listFiles((dir1, name) -> name.matches(pattern));
+        // Locate the existing patient file by listing files in the directory and matching the pattern
+        File dir = new File(imagesDirectoryPath);
+        String pattern = patientId + "_.*\\.txt"; // Regex pattern to match patient files
+        File[] matchingFiles = dir.listFiles((dir1, name) -> name.matches(pattern));
 
-		Path filePath;
-		if (matchingFiles != null && matchingFiles.length > 0) {
-			// Assuming the first file is the correct one if multiple matches exist
-			filePath = matchingFiles[0].toPath();
-		} else {
-			// Log or notify about the inability to locate the file, if necessary
-			System.err.println("No matching patient file found for ID: " + patientId);
-			return; // Stop execution if no file is found
-		}
+        Path filePath;
+        if (matchingFiles != null && matchingFiles.length > 0) {
+            // Assuming the first file is the correct one if multiple matches exist
+            filePath = matchingFiles[0].toPath();
+        } else {
+            // Log or notify about the inability to locate the file, if necessary
+            System.err.println("No matching patient file found for ID: " + patientId);
+            return; // Stop execution if no file is found
+        }
 
-		// Only update the "CONTACTINFORMATION" as per requirement
-		String contactInfo = ((TextArea) controls.get("CONTACTINFORMATION")).getText();
-		List<String> lines = new ArrayList<>();
-		try {
-			lines = Files.readAllLines(filePath);
-			for (int i = 0; i < lines.size(); i++) {
-				if (lines.get(i).startsWith("CONTACTINFORMATION:")) {
-					lines.set(i, "CONTACTINFORMATION: " + contactInfo);
-					break; // Stop once the contact info line is updated
-				}
-			}
-		} catch (IOException e) {
-			showAlert("Error reading patient data: " + e.getMessage());
-			return;
-		}
+        // Only update the "CONTACTINFORMATION" as per requirement
+        String contactInfo = ((TextArea) controls.get("CONTACTINFORMATION")).getText();
+        List<String> lines = new ArrayList<>();
+        try {
+            lines = Files.readAllLines(filePath);
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).startsWith("CONTACTINFORMATION:")) {
+                    lines.set(i, "CONTACTINFORMATION: " + contactInfo);
+                    break; // Stop once the contact info line is updated
+                }
+            }
+        } catch (IOException e) {
+            showAlert("Error reading patient data: " + e.getMessage());
+            return;
+        }
 
-		try {
-			Files.write(filePath, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-			showAlert("Patient information updated successfully.");
-		} catch (IOException e) {
-			showAlert("Error updating patient data: " + e.getMessage());
-		}
-	}
+        try {
+            Files.write(filePath, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            showAlert("Patient information updated successfully.");
+        } catch (IOException e) {
+            showAlert("Error updating patient data: " + e.getMessage());
+        }
+    }
+
 
 	private void preloadPatientData() {
         // Attempt to find the file that starts with patientId and ends with .txt
@@ -272,6 +272,7 @@ public class PatientView {
             System.out.println("No data file found for patient ID: " + patientId);
         }
     }
+
 	private void showAlert(String message) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setHeaderText(null);
