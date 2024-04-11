@@ -71,7 +71,6 @@ public class DoctorView {
 
 		Scene scene = new Scene(root, 1500, 800);
 		stage.setScene(scene);
-		stage.setFullScreen(true);
 		stage.setTitle("Doctor Portal - Patient Information");
 
 		// Preload patient data before displaying the scene
