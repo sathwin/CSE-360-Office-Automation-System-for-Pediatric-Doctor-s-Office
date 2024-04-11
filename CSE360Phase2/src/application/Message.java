@@ -28,8 +28,8 @@ public class Message {
     public LocalDateTime getTimestamp() { return timestamp; }
 
     public String formatForSaving() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return senderId + "|" + timestamp.format(formatter) + "| " + content;
+
+        return " " + content;
     }
 
     public static Message parseFromSavedString(String savedString) {
@@ -39,7 +39,7 @@ public class Message {
         String receiverId = parts[1];
         LocalDateTime timestamp;
         try {
-            timestamp = LocalDateTime.parse(parts[2], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            timestamp = LocalDateTime.parse(parts[2], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         } catch (Exception e) {
             return null; // Or handle the error appropriately
         }
