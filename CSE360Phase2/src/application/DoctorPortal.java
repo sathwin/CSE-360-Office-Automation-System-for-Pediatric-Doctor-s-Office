@@ -15,7 +15,8 @@ import java.io.File;
 public class DoctorPortal {
 
     private Stage primaryStage;
-    private final String imagesDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2";
+    String directoryPath = System.getProperty("user.dir");
+    private final String imagesDirectoryPath = directoryPath + "/";
 
     public DoctorPortal(Stage primaryStage) {
         this.primaryStage = primaryStage;
