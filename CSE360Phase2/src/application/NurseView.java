@@ -161,7 +161,6 @@ public class NurseView {
             }
         }
     }
-
     // Shows an information alert.
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
