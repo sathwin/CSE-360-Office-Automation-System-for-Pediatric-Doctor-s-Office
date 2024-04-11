@@ -19,7 +19,8 @@ import java.util.Random;
 public class NursePortal {
 
     private Stage primaryStage;
-    private final String imagesDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2"; // Replace with the actual path
+    String directoryPath = System.getProperty("user.dir");
+    private final String imagesDirectoryPath = directoryPath + "/"; // Replace with the actual path
 
     public NursePortal(Stage primaryStage) {
         this.primaryStage = primaryStage;
