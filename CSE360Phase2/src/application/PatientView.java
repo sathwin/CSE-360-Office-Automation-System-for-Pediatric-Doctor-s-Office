@@ -194,7 +194,6 @@ public class PatientView {
 
 		Scene scene = new Scene(root, 1500, 800); // Adjust size as needed
 		stage.setScene(scene);
-		stage.setFullScreen(true);
 		stage.setTitle("Patient Portal - Patient Information");
 		stage.show();
 
