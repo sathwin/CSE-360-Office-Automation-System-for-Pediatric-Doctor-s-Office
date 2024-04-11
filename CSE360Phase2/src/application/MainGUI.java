@@ -13,7 +13,8 @@ import javafx.stage.Stage;
 public class MainGUI {
 
     private Stage primaryStage;
-    private final String imagesDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2"; // Provided images directory path
+    String directoryPath = System.getProperty("user.dir");
+    private final String imagesDirectoryPath = directoryPath + "/"; // Provided images directory path
 
     public MainGUI(Stage primaryStage) {
         this.primaryStage = primaryStage;
