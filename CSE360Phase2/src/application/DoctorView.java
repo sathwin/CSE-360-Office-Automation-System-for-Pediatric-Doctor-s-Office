@@ -273,6 +273,7 @@ public class DoctorView {
             System.out.println("No data file found for patient ID: " + patientId);
         }
     }
+
 	private void showAlert(String message) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setHeaderText(null);
