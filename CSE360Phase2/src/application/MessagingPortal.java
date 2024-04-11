@@ -1,7 +1,5 @@
 package application;
 
-import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -11,14 +9,14 @@ import javafx.stage.Stage;
 import java.nio.file.*;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MessagingPortal {
     private TextArea messageDisplayArea;
     private TextField patientIdInput, messageInputField;
     private Button loadButton, sendButton, callButton;
-    private String dataDirectoryPath = "/Users/gunduabhi1/eclipse-workspace2/CSE360Phase2"; // Default path, consider using a configuration mechanism
+    String directoryPath = System.getProperty("user.dir");
+    private final String dataDirectoryPath = directoryPath + "/"; // Default path, consider using a configuration mechanism
     private final String doctorId = "DOCTOR";
     private boolean isDoctor;
 
