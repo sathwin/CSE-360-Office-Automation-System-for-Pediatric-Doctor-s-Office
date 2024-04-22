@@ -75,4 +75,3 @@ public class MainGUI {
         return button; // Return the created button.
     }
 }
-
