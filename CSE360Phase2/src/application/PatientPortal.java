@@ -27,6 +27,11 @@ import javafx.scene.layout.BackgroundFill;
 // Other imports as necessary
 
 public class PatientPortal {
+	
+	TextField firstNameInput;
+	TextField lastNameInput;
+	TextField dobInput;
+	
     private Stage primaryStage;
     // Ensure this path is correctly pointing to your project's resources or appropriate directory
     String directoryPath = System.getProperty("user.dir");
@@ -70,43 +75,19 @@ public class PatientPortal {
         createAccountSection.setAlignment(Pos.CENTER_LEFT);
         createAccountSection.setPadding(new Insets(50));
         Label createAccountLabel = new Label("Create New Patient");
-        TextField firstNameInput = new TextField();
+        firstNameInput = new TextField();
         firstNameInput.setPromptText("First Name");
-        TextField lastNameInput = new TextField();
+        lastNameInput = new TextField();
         lastNameInput.setPromptText("Last Name");
-        TextField dobInput = new TextField();
+        dobInput = new TextField();
         dobInput.setPromptText("Date of Birth (MM-DD-YYYY)");
         Button createButton = new Button("Create");
 
         createButton.setOnAction(e -> {
-            String firstName = firstNameInput.getText().trim();
-            String lastName = lastNameInput.getText().trim();
-            String dob = dobInput.getText().trim().replace("/", "-");
-            if (firstName.isEmpty() || lastName.isEmpty() || dob.isEmpty()) {
-                showAlert("Please enter all fields.");
-                return;
-            }
-
-            String patientID = generatePatientID();
-            String patientFileName = String.format("%s_%s_%s_%s.txt", patientID, firstName, lastName, dob);
-            Path patientFilePath = Paths.get(imagesDirectoryPath, patientFileName);
-
-            if (Files.exists(patientFilePath)) {
-                showAlert("An account for this patient ID already exists.");
-                return;
-            }
-
-            try {
-                ArrayList<String> content = new ArrayList<>();
-                content.add("Patient ID: " + patientID);
-                content.add("First Name: " + firstName);
-                content.add("Last Name: " + lastName);
-                content.add("DOB: " + dob);
-                Files.write(patientFilePath, content, StandardOpenOption.CREATE_NEW);
-                showAlert("Patient account created successfully. Patient ID: " + patientID);
-            } catch (IOException ex) {
-                showAlert("Error creating patient account: " + ex.getMessage());
-            }
+        	
+        	if(isValid()) {
+        		saveData();
+        	}
         });
         
         Button backButton = new Button("Log Out");
@@ -157,4 +138,86 @@ public class PatientPortal {
         alert.setHeaderText(null);
         alert.showAndWait();
     }
+    
+    private void saveData() {
+    	String firstName = firstNameInput.getText().trim();
+        String lastName = lastNameInput.getText().trim();
+        String dob = dobInput.getText().trim().replace("/", "-");
+        if (firstName.isEmpty() || lastName.isEmpty() || dob.isEmpty()) {
+            showAlert("Please enter all fields.");
+            return;
+            
+
+        }
+
+        String patientID = generatePatientID();
+        String patientFileName = String.format("%s_%s_%s_%s.txt", patientID, firstName, lastName, dob);
+        Path patientFilePath = Paths.get(imagesDirectoryPath, patientFileName);
+
+        if (Files.exists(patientFilePath)) {
+            showAlert("An account for this patient ID already exists.");
+            return;
+        }
+
+        try {
+            ArrayList<String> content = new ArrayList<>();
+            content.add("Patient ID: " + patientID);
+            content.add("First Name: " + firstName);
+            content.add("Last Name: " + lastName);
+            content.add("DOB: " + dob);
+            Files.write(patientFilePath, content, StandardOpenOption.CREATE_NEW);
+            showAlert("Patient account created successfully. Patient ID: " + patientID);
+        } catch (IOException ex) {
+            showAlert("Error creating patient account: " + ex.getMessage());
+        }
+    }
+    
+    public boolean isValid() {
+    	
+    	try {
+    		if(firstNameInput.getText().isEmpty()) {
+    			showAlert("Please Enter Patient First name");
+    			return false;
+    		}
+    		Integer.parseInt(firstNameInput.getText());
+    		showAlert("Please enter a Valid First Name");
+    		return false;
+    		
+    	}catch(NumberFormatException e) {}
+    	
+    	try {
+    		if(lastNameInput.getText().isEmpty()) {
+    			showAlert("Please Enter Patient Last name");
+    			return false;
+    		}
+    		Integer.parseInt(lastNameInput.getText());
+    		showAlert("Please enter a Valid Last Name");
+    		return false;
+    		
+    	}catch(NumberFormatException e) {}
+    	
+    	try {
+    		if(dobInput.getText().isEmpty()) {
+    			showAlert("Please Enter Patient Date of Birth");
+    			return false;
+    		}
+    		String str = dobInput.getText();
+    		if ((str.contains(String.valueOf("/")))||(str.contains(String.valueOf("-")))) {}
+    		else {
+    		  showAlert("Please enter Date of Birth in the proper format");
+    		  return false;
+    		}
+    		str = str.replace("/", "");
+    		str = str.replace("-", "");
+    		
+    		Integer.parseInt(str);
+
+    	}catch(NumberFormatException e) {
+    		showAlert("Please enter valid Date of Birth");
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
 }
