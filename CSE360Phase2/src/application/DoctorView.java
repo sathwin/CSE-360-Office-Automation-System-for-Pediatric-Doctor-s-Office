@@ -132,8 +132,15 @@ public class DoctorView {
 	}
 
 	private void sendToPharmacy() {
-		showAlert("Sent to Pharmacy.");
+	    TextArea prescribedMedicationsTextArea = (TextArea) controls.get("PRESCRIBEDMEDICATIONS");
+	    String prescribedMedications = prescribedMedicationsTextArea.getText();
+	    if (prescribedMedications.isEmpty()) {
+	        showAlert("Prescribed Medications field is empty.");
+	    } else {
+	        showAlert("Sent to Pharmacy.");
+	    }
 	}
+
 
 	private GridPane createCenterGrid() {
 		GridPane grid = new GridPane();
