@@ -162,7 +162,14 @@ public class NurseView {
         GridPane.setHalignment(saveButton, HPos.RIGHT);
         GridPane.setValignment(saveButton, VPos.BOTTOM);
         grid.add(saveButton, 1, 16);
-        saveButton.setOnAction(event -> savePatientInfo());
+        saveButton.setOnAction(event -> {
+        	
+        	if(isValid()) {
+        		savePatientInfo();
+        	}
+        	
+        	
+        });
 
         return grid;
     }
@@ -237,6 +244,36 @@ public class NurseView {
                 showAlert("Error loading patient data: " + e.getMessage());
             }
         }
+    }
+    
+    private boolean isValid() {
+    	TextField heightTextArea = (TextField) controls.get("HEIGHT");
+	    String height = heightTextArea.getText();
+	    TextField weightTextArea = (TextField) controls.get("WEIGHT");
+	    String weight = weightTextArea.getText();
+	    TextField tempTextArea = (TextField) controls.get("BODYTEMPERATURE");
+	    String temp = tempTextArea.getText();
+	    TextField bpTextArea = (TextField) controls.get("BLOODPRESSURE");
+	    String bloodpres = bpTextArea.getText();
+	    
+	    if(weight.isEmpty()) {
+	    	showAlert("Please enter the Weight of the patient");
+	    	return false;
+	    }
+	    if(height.isEmpty()) {
+	    	showAlert("Please enter the Height of patient");
+	    	return false;
+	    }
+	    if(temp.isEmpty()) {
+	    	showAlert("Please enter the Body Temperatur of the patient");
+	    	return false;
+	    }
+	    if(bloodpres.isEmpty()) {
+	    	showAlert("Please enter the Blood Pressure of the patient");
+	    	return false;
+	    }
+	    return true;
+	    
     }
 
     private void showAlert(String message) {
