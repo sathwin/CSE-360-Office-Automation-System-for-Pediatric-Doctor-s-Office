@@ -149,7 +149,18 @@ public class PatientView {
 		GridPane.setHalignment(saveButton, HPos.RIGHT);
 		GridPane.setValignment(saveButton, VPos.BOTTOM);
 		grid.add(saveButton, 1, 22);
-		saveButton.setOnAction(event -> savePatientInfo());
+		saveButton.setOnAction(event -> {
+			
+			 TextArea contInfo = (TextArea) controls.get("CONTACTINFORMATION");
+			    String infoChange = contInfo.getText();
+			    if (infoChange.isEmpty()) {
+			        showAlert("Contact Information is empty.");
+			    }
+			    else {
+			    	savePatientInfo();
+			    }
+			
+		});
 
 		return grid;
 	}
