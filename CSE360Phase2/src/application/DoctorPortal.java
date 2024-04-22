@@ -90,7 +90,20 @@ public class DoctorPortal {
 
         // Adding search and back buttons
         Button searchButton = new Button("Search");
-        searchButton.setOnAction(e -> searchPatient(patientIDInput.getText()));
+        
+        searchButton.setOnAction(e -> {
+        
+        
+	        String patientId = patientIDInput.getText();
+	        
+	        if(patientId.isEmpty()) {
+	        	showAlert("Please enter a Patient ID");
+	        }
+	        else {
+	        searchPatient(patientId);
+	        }
+        
+        });
 
         Button backButton = new Button("Log Out");
         backButton.setOnAction(e -> new MainGUI(primaryStage).showMainScreen());
@@ -123,4 +136,3 @@ public class DoctorPortal {
         alert.showAndWait();
     }
 }
-
