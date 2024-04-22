@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.Random;
 
 public class NursePortal {
+	
+	TextField firstNameInput;
+	TextField lastNameInput;
+	TextField dobInput;
 
     private Stage primaryStage;
     String directoryPath = System.getProperty("user.dir");
@@ -69,13 +73,13 @@ public class NursePortal {
         Label createPatientLabel = new Label("Create New Patient");
         createPatientLabel.setTextFill(Color.WHITE);
 
-        TextField firstNameInput = new TextField();
+        firstNameInput = new TextField();
         firstNameInput.setPromptText("First Name");
 
-        TextField lastNameInput = new TextField();
+        lastNameInput = new TextField();
         lastNameInput.setPromptText("Last Name");
 
-        TextField dobInput = new TextField();
+        dobInput = new TextField();
         dobInput.setPromptText("Date of Birth (DOB)");
 
         Button createButton = new Button("Create");
@@ -83,7 +87,10 @@ public class NursePortal {
             String firstName = firstNameInput.getText();
             String lastName = lastNameInput.getText();
             String dob = dobInput.getText();
+            
+            if(isValid()) {
             createNewPatient(firstName, lastName, dob);
+            }
         });
 
         VBox createPatientBox = new VBox(10, createPatientLabel, firstNameInput, lastNameInput, dobInput, createButton);
@@ -102,7 +109,12 @@ public class NursePortal {
         Button searchButton = new Button("Search");
         searchButton.setOnAction(e -> {
             String patientId = searchPatientIdInput.getText();
+            if(patientId.isEmpty()) {
+            	showAlert("Please enter a Patient ID");
+            }
+            else {
             searchPatient(patientId);
+            }
         });
 
         VBox searchPatientBox = new VBox(10, searchPatientLabel, searchPatientIdInput, searchButton);
@@ -113,15 +125,9 @@ public class NursePortal {
 
     private void createNewPatient(String firstName, String lastName, String dob) {
         String patientID = generatePatientID();
-        // Format the date of birth (DOB) if necessary, or ensure it's in the right format.
-        String formattedDOB = dob.replace("/", "-"); // Assuming DOB is provided as MM/DD/YYYY and you want MM-DD-YYYY. Adjust as necessary.
-        // Update the file name format here
+        String formattedDOB = dob.replace("/", "-");
         String filePath = imagesDirectoryPath + File.separator + patientID + "_" + firstName + "_" + lastName + "_" + formattedDOB + ".txt";
 
-        if (firstName.isEmpty() || lastName.isEmpty() || dob.isEmpty()) {
-            showAlert("Please enter all fields.");
-            return;
-        }
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write("Patient ID: " + patientID + "\n");
             fileWriter.write("First Name: " + firstName + "\n");
@@ -139,9 +145,7 @@ public class NursePortal {
     }
 
     private void searchPatient(String patientId) {
-        // Updated directory path to match where you save the patient files.
         File dir = new File(imagesDirectoryPath); 
-        // Filter files in the directory based on the patient ID.
         File[] matchingFiles = dir.listFiles((dir1, name) -> name.startsWith(patientId + "_") && name.endsWith(".txt"));
 
         if (matchingFiles != null && matchingFiles.length > 0) {
@@ -160,5 +164,53 @@ public class NursePortal {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    
+public boolean isValid() {
+    	
+    	try {
+    		if(firstNameInput.getText().isEmpty()) {
+    			showAlert("Please Enter Patient First name");
+    			return false;
+    		}
+    		Integer.parseInt(firstNameInput.getText());
+    		showAlert("Please enter a Valid First Name");
+    		return false;
+    		
+    	}catch(NumberFormatException e) {}
+    	
+    	try {
+    		if(lastNameInput.getText().isEmpty()) {
+    			showAlert("Please Enter Patient Last name");
+    			return false;
+    		}
+    		Integer.parseInt(lastNameInput.getText());
+    		showAlert("Please enter a Valid Last Name");
+    		return false;
+    		
+    	}catch(NumberFormatException e) {}
+    	
+    	try {
+    		if(dobInput.getText().isEmpty()) {
+    			showAlert("Please Enter Patient Date of Birth");
+    			return false;
+    		}
+    		String str = dobInput.getText();
+    		if ((str.contains(String.valueOf("/")))||(str.contains(String.valueOf("-")))) {}
+    		else {
+    		  showAlert("Please enter Date of Birth in the proper format");
+    		  return false;
+    		}
+    		str = str.replace("/", "");
+    		str = str.replace("-", "");
+    		
+    		Integer.parseInt(str);
+
+    	}catch(NumberFormatException e) {
+    		showAlert("Please enter valid Date of Birth");
+    		return false;
+    	}
+    	
+    	return true;
     }
 }
